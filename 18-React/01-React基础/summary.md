@@ -65,6 +65,32 @@ ReactDOM.render(vDOM, document.getElementById('test'))
   - 如果大写，会被解析成自定义标签（如果未定义，报错为`Uncaught ReferenceError: Good is not defined`）。
 - 列表渲染时需要 `key` 属性；示例中使用 `index` 作为 key，但这只是临时方案，实际项目中应避免用索引作为 `key`，而是使用对象的 `id` 或其他唯一标识符。如果使用 `index` 作为 `key`，当数组中的元素顺序发生变化时，React无法正确识别哪些元素发生了变化，从而导致性能问题和意外的行为。
 
+---
+
+## 03-组件的基本使用
+
+### 重点
+- 介绍 React 组件的两种创建方式：函数式组件和 ES6 类组件。
+- 组件名称首字母必须大写，否则会被解析为 HTML 原生标签。
+- React 渲染组件标签时，会自动创建组件实例或调用组件函数。
+
+### 用法
+- 函数组件：
+  - `function MyComponent() { return <h2>工厂函数组件(简单组件/无状态)</h2> }`
+- 类组件：
+  - `class MyComponent2 extends React.Component { render() { return <h2>ES6类组件(复杂组件/有状态)</h2> } }`
+- 使用组件标签渲染：`ReactDOM.render(<MyComponent />, document.getElementById('example1'))`
+- React 会根据组件类型：
+  - 函数组件直接调用组件函数返回 JSX。
+  - 类组件创建实例后调用 `render()` 方法返回 JSX。
+
+### 注意事项
+- 组件不是vDOM，渲染组件时需要用标签包裹，不能像vDOM那样直接放在第一个参数中，否则会报错 `Warning: Functions are not valid as a React child. This may happen if you return a Component instead of <Component /> from render. Or maybe you want to call this function rather than return it.`
+- 组件名首字母必须大写；小写组件名会被当作 HTML 标准标签处，报错 ``The tag <myComponent> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.``。
+- 函数组件内部 `this` 为 `undefined`，不能依赖 `this`。
+- 类组件中的 `this` 指向组件实例，可以访问 `this.props` 和 `this.state`。
+- 函数组件适合“简单组件 / 无状态组件”，类组件适合“复杂组件 / 有状态组件”。
+- 组件本身必须返回一个合法 JSX 结构，且只有一个顶层根节点。
 
 ---
 
