@@ -106,34 +106,36 @@ ReactDOM.render(vDOM, document.getElementById('test'))
   constructor(props) {
     super(props)
     this.state = { isPig: true }
-    this.handlerClick = this.handlerClick.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
   ```
 - 在事件处理函数中使用 `this.setState()` 更新状态：
   ```jsx
-  handlerClick() {
+  handleClick() {
     let isPig = !this.state.isPig
     this.setState({ isPig })
   }
   ```
 - 在 JSX 中访问状态：`this.state.isPig` 或解构 `let { isPig } = this.state`
-- 在 JSX 中使用事件处理函数：`onClick={this.handlerClick}`
+- 在 JSX 中使用事件处理函数：`onClick={this.handleClick}`
 
 - **简写方式**：直接在类中声明 state 和箭头函数方法
   ```jsx
   state = { isPig: true }
-  handlerClick = () => { ... }
+  handleClick = () => { ... }
   ```
 
 ### 注意事项
-- 不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` 来更新状态。
-- 在 JSX 中绑定事件处理函数：`onClick={this.handlerClick}` 
-  -  React重新封装了事件处理函数，`onclick` 要使用驼峰命名。
+- 在 JSX 中绑定事件处理函数：`onClick={this.handleClick}` 
+  -  React重新封装了事件，`onclick` 要使用驼峰命名。
   -  事件处理函数要用{}，不能像原生js那样用字符串。
-  -  `onClick={this.handlerClick()}` 会在渲染时执行函数，并且把函数调用的返回值赋给 `onClick`，点击时就不会调用事件处理函数。
+  -  `onClick={this.handleClick()}` 会在渲染时执行函数，并且把函数调用的返回值赋给 `onClick`，点击时就不会调用事件处理函数。
+  -  在React中获取原生事件：`e.nativeEvent`
+- 由于事件处理函数 `this.handleClick` 是作为 `onClick` 的回调，所以不是通过实例调用的，是直接调用；并且类中的方法（constructor和render除外）默认开启了局部严格模式，所以在事件处理函数中 `this` 为 `undefined`。
 - 事件处理函数中的 `this` 问题可通过两种方式解决：
-  1. 在 constructor 中使用 `bind`：`this.handlerClick = this.handlerClick.bind(this)`
+  1. 在 constructor 中使用 `bind`：`this.handleClick = this.handleClick.bind(this)` （把原型链上的函数绑定到实例上，console.log中可以看到实例和原型链上各有一个 `handleClick`）
   2. 使用箭头函数声明方法（推荐）
+- 不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` 来更新状态。
 - state 的更新是异步的，不会立即生效。
 
 ---

@@ -27,7 +27,7 @@
       state = { isPig: true }
 
       // 自定义一个响应点击的函数
-      handlerClick = () => {
+      handleClick = () => {
         let isPig = !this.state.isPig
         // 如下代码属于直接更改状态，不会被react所认可，不会被react监听到
         // this.state.isPig = isPig //不可以直接修改状态数据
@@ -39,7 +39,7 @@
       render() {
         let { isPig } = this.state
         // 如下代码，在指定点击事件的时候，不要加()
-        return <h2 onClick={this.handlerClick}>{isPig ? '佩奇是一头可爱的猪' : '佩奇不是猪'}</h2>
+        return <h2 onClick={this.handleClick}>{isPig ? '佩奇是一头可爱的猪' : '佩奇不是猪'}</h2>
       }
     }
 
