@@ -27,7 +27,6 @@
 ### 重点
 - 讲解创建虚拟 DOM 的两种方式：`React.createElement()` 和 JSX。
 - 演示 JSX 中如何使用变量、属性、文本、嵌套标签。
-- 说明 JSX 与 React.createElement 的等价关系。
 
 ### 用法
 - 原生创建方式：
@@ -72,7 +71,6 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 ### 重点
 - 介绍 React 组件的两种创建方式：函数式组件和 ES6 类组件。
 - 组件名称首字母必须大写，否则会被解析为 HTML 原生标签。
-- React 渲染组件标签时，会自动创建组件实例或调用组件函数。
 
 ### 用法
 - 函数组件：
@@ -87,13 +85,109 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 ### 注意事项
 - 组件不是vDOM，渲染组件时需要用标签包裹，不能像vDOM那样直接放在第一个参数中，否则会报错 `Warning: Functions are not valid as a React child. This may happen if you return a Component instead of <Component /> from render. Or maybe you want to call this function rather than return it.`
 - 组件名首字母必须大写；小写组件名会被当作 HTML 标准标签处，报错 ``The tag <myComponent> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.``。
-- 函数组件内部 `this` 为 `undefined`，不能依赖 `this`。
+- 函数组件内部 `this` 为 `undefined` （严格模式下babel 会把自定义函数内原本指向window的 `this` 转换成 `undefined` ）。
 - 类组件中的 `this` 指向组件实例，可以访问 `this.props` 和 `this.state`。
 - 函数组件适合“简单组件 / 无状态组件”，类组件适合“复杂组件 / 有状态组件”。
 - 组件本身必须返回一个合法 JSX 结构，且只有一个顶层根节点。
 
 ---
 
+## 04-state
+
+### 重点
+- 介绍 React 中的 state（状态）：组件的私有数据，用于记录组件的动态信息。
+- state 只能在类组件中直接使用；函数组件需要使用 Hooks（后续学习）。
+- 通过 `this.setState()` 修改状态，促发重新渲染；不能直接修改 `this.state`。
+- 事件处理函数中的 `this` 指向问题及解决方案。
+
+### 用法
+- 在 `constructor` 中初始化 state，并绑定事件处理函数：
+  ```jsx
+  constructor(props) {
+    super(props)
+    this.state = { isPig: true }
+    this.handlerClick = this.handlerClick.bind(this)
+  }
+  ```
+- 在事件处理函数中使用 `this.setState()` 更新状态：
+  ```jsx
+  handlerClick() {
+    let isPig = !this.state.isPig
+    this.setState({ isPig })
+  }
+  ```
+- 在 JSX 中访问状态：`this.state.isPig` 或解构 `let { isPig } = this.state`
+- 在 JSX 中使用事件处理函数：`onClick={this.handlerClick}`
+
+- **简写方式**：直接在类中声明 state 和箭头函数方法
+  ```jsx
+  state = { isPig: true }
+  handlerClick = () => { ... }
+  ```
+
+### 注意事项
+- 不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` 来更新状态。
+- 在 JSX 中绑定事件处理函数：`onClick={this.handlerClick}` 
+  -  React重新封装了事件处理函数，`onclick` 要使用驼峰命名。
+  -  事件处理函数要用{}，不能像原生js那样用字符串。
+  -  `onClick={this.handlerClick()}` 会在渲染时执行函数，并且把函数调用的返回值赋给 `onClick`，点击时就不会调用事件处理函数。
+- 事件处理函数中的 `this` 问题可通过两种方式解决：
+  1. 在 constructor 中使用 `bind`：`this.handlerClick = this.handlerClick.bind(this)`
+  2. 使用箭头函数声明方法（推荐）
+- state 的更新是异步的，不会立即生效。
+
+---
+
+## 05-props
+
+### 重点
+- 介绍 React 中的 props（属性）：用于父组件向子组件传递数据的机制。
+- props 是只读的，不能修改。
+- 支持 props 类型验证和默认值设置。
+- 既适用于类组件，也适用于函数组件。
+
+### 用法
+- 渲染组件时传递属性：
+  ```jsx
+  <Person name={p1.name} sex={p1.sex} age={p1.age} />
+  ```
+- 使用展开运算符传递对象所有属性：
+  ```jsx
+  <Person {...p2} />
+  ```
+- 在类组件中访问 props：`this.props` 或解构 `let { name, age, sex } = this.props`
+- 在函数组件中访问 props：通过函数参数 `function Person(props) { ... }`
+- 设置 props 类型验证（需引入 `prop-types.js`）：
+  ```jsx
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    sex: PropTypes.string.isRequired,
+    age: PropTypes.number
+  }
+  ```
+- 设置 props 默认值：
+  ```jsx
+  static defaultProps = {
+    age: 18
+  }
+  ```
+
+### 注意事项
+- props 是只读的，不能修改；只有通过重新渲染组件（传递新的 props）才能更新显示。
+- `propTypes` 和 `defaultProps` 是类的静态属性，用 `static` 关键字声明。
+- 类型验证中，`isRequired` 表示该属性为必需的。
+- 如果未提供必需的 props，控制台会有警告。
+- 展开运算符 `{...object}` 可简化传递多个 props，但需确保对象的属性名与组件的 props 名匹配。
+- 函数组件中也可以使用 `propTypes` 和 `defaultProps`：
+  ```jsx
+  Person.propTypes = { ... }
+  Person.defaultProps = { ... }
+  ```
+
+---
+
 ## 综合提醒
-- 本阶段重点是理解 React 的虚拟 DOM、JSX 语法和渲染流程。 
-- 先掌握 `ReactDOM.render()`、`React.createElement()`、JSX 基本写法，再继续学习组件与状态管理。
+- state 是组件内部的可变数据，props 是从外部传入的只读数据。
+- state 改变时会触发重新渲染；props 改变也会触发重新渲染。
+- 简写方式（箭头函数、直接赋值 state）是现代 React 类组件的标准写法，推荐使用。
+- 后续学习中，函数组件配合 Hooks 会逐步取代类组件的地位。
