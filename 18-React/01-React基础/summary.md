@@ -97,8 +97,8 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 ### 重点
 - 介绍 React 中的 state（状态）：组件的私有数据，用于记录组件的动态信息。
 - state 只能在类组件中直接使用；函数组件需要使用 Hooks（后续学习）。
+- - 事件处理函数中的 `this` 指向问题及解决方案。
 - 通过 `this.setState()` 修改状态，促发重新渲染；不能直接修改 `this.state`。
-- 事件处理函数中的 `this` 指向问题及解决方案。
 
 ### 用法
 - 在 `constructor` 中初始化 state，并绑定事件处理函数：
@@ -134,9 +134,10 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - 由于事件处理函数 `this.handleClick` 是作为 `onClick` 的回调，所以不是通过实例调用的，是直接调用；并且类中的方法（constructor和render除外）默认开启了局部严格模式，所以在事件处理函数中 `this` 为 `undefined`。
 - 事件处理函数中的 `this` 问题可通过两种方式解决：
   1. 在 constructor 中使用 `bind`：`this.handleClick = this.handleClick.bind(this)` （把原型链上的函数绑定到实例上，console.log中可以看到实例和原型链上各有一个 `handleClick`）
-  2. 使用箭头函数声明方法（推荐）
-- 不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` 来更新状态。
-- state 的更新是异步的，不会立即生效。
+  2. 使用赋值语句 + 箭头函数声明方法（赋值语句会把函数绑定到实例上，console.log中可以看到实例上有 `handleClick`，而原型链上没有；并且箭头函数内部的 `this` 指向外层作用域的 `this`）
+- 不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` （父类React.Component中的方法）来更新状态。
+- state 的更新是属性的合并，不是替换；并且是异步的，不会立即生效。
+- 类组件中的 `render` 会被调用1+n次，第一次是渲染实例的时候，后面的n次是在事件处理函数中更新状态的时候。
 
 ---
 

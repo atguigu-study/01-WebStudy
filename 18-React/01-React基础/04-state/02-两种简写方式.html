@@ -38,6 +38,7 @@
       // 重写父类的render
       render() {
         let { isPig } = this.state
+        console.log(this);
         // 如下代码，在指定点击事件的时候，不要加()
         return <h2 onClick={this.handleClick}>{isPig ? '佩奇是一头可爱的猪' : '佩奇不是猪'}</h2>
       }
