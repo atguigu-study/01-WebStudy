@@ -17,6 +17,10 @@
   <script type="text/javascript" src="../js/prop-types.js"></script>
 
   <script type="text/babel">
+    // 两个同名的组件，一个类组件，一个函数组件
+    // 函数组件会被hoist提升，类组件不会被提升，顶部log输出的是函数组件，之后类组件覆盖了同名的函数组件，底部log输出的是类组件
+    console.log("Person", Person);
+    
     /**
      * 需求：自定义用来显示一个人员信息的组件，包含：姓名、年龄、性别三个信息
      * 1. 姓名须为字符串类型，且是必要信息
@@ -34,7 +38,8 @@
       static propTypes = {
         name: PropTypes.string.isRequired,
         sex: PropTypes.string.isRequired,
-        age: PropTypes.number
+        age: PropTypes.number,
+        speak: PropTypes.func
       }
 
       // 设置参数的默认值
@@ -44,12 +49,13 @@
 
       // 重写父类的render方法
       render() {
+        console.log("类组件...", this);
         let { name, age, sex } = this.props
         return (
           <ul>
             <li>姓名：{name}</li>
-            <li>性别：{age + 1}</li>
-            <li>年龄：{sex}</li>
+            <li>年龄：{age + 1}</li>
+            <li>性别：{sex}</li>
             <hr />
           </ul>
         )
@@ -57,27 +63,47 @@
     }
 
     // 工厂函数创建组件
-    function Person(prop) {
+    function Person(props) {
+      console.log("函数组件...");
+      
+      const { name, age, sex } = props;
       return (
         <ul>
-          <li>姓名：{prop.name}</li>
-          <li>性别：{prop.age}</li>
-          <li>年龄：{prop.sex}</li>
+          <li>姓名：{name}</li>
+          <li>年龄：{age}</li>
+          <li>性别：{sex}</li>
           <hr />
         </ul>
       )
+    }
+
+    Person.propTypes = {
+      name: PropTypes.string.isRequired,
+      sex: PropTypes.string.isRequired,
+      age: PropTypes.number,
+      speak: PropTypes.func
+    }
+
+    Person.defaultProps = {
+      age: 18
     }
 
     let p1 = {
       name: '张三',
       age: 19,
       sex: '男',
+      speak: function() {
+        console.log("hello,react");
+      }
     }
 
     let p2 = {
       name: '李四',
       age: 21,
       sex: '女',
+      speak() {
+        console.log("hello,react");
+      }
     }
 
     ReactDOM.render(
@@ -85,6 +111,9 @@
       document.getElementById('example1')
     )
     ReactDOM.render(<Person {...p2} />, document.getElementById('example2'))
+
+    // 输出类组件
+    console.log("Person", Person);
   </script>
 </body>
 

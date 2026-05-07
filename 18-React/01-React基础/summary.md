@@ -135,7 +135,8 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - 事件处理函数中的 `this` 问题可通过两种方式解决：
   1. 在 constructor 中使用 `bind`：`this.handleClick = this.handleClick.bind(this)` （把原型链上的函数绑定到实例上，console.log中可以看到实例和原型链上各有一个 `handleClick`）
   2. 使用赋值语句 + 箭头函数声明方法（赋值语句会把函数绑定到实例上，console.log中可以看到实例上有 `handleClick`，而原型链上没有；并且箭头函数内部的 `this` 指向外层作用域的 `this`）
-- 不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` （父类React.Component中的方法）来更新状态。
+- 事件处理函数中不能直接修改 state：`this.state.isPig = false` 不会触发重新渲染。必须使用 `this.setState()` （父类React.Component中的方法）来更新状态。
+- constructor中的 `state` 直接赋值，不要使用 `setState`
 - state 的更新是属性的合并，不是替换；并且是异步的，不会立即生效。
 - 类组件中的 `render` 会被调用1+n次，第一次是渲染实例的时候，后面的n次是在事件处理函数中更新状态的时候。
 
@@ -147,7 +148,7 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - 介绍 React 中的 props（属性）：用于父组件向子组件传递数据的机制。
 - props 是只读的，不能修改。
 - 支持 props 类型验证和默认值设置。
-- 既适用于类组件，也适用于函数组件。
+- 既适用于类组件，也适用于函数组件（state, refs只能用于函数组件）。
 
 ### 用法
 - 渲染组件时传递属性：
@@ -179,7 +180,7 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - props 是只读的，不能修改；只有通过重新渲染组件（传递新的 props）才能更新显示。
 - `propTypes` 和 `defaultProps` 是类的静态属性，用 `static` 关键字声明。
 - 类型验证中，`isRequired` 表示该属性为必需的。
-- 如果未提供必需的 props，控制台会有警告。
+  如果未提供必需的 props，控制台会有警告。
 - 展开运算符 `{...object}` 可简化传递多个 props，但需确保对象的属性名与组件的 props 名匹配。
 - 函数组件中也可以使用 `propTypes` 和 `defaultProps`：
   ```jsx
