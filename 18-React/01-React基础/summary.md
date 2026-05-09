@@ -240,3 +240,82 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - Hooks `useRef()` 只能用于函数组件，用于创建一个在组件整个生命周期内保持不变的引用对象。
 - 不要使用 `ref` 替代正常的数据流，`ref` 适合处理 focus、选择文本、动画、第三方 DOM 库等场景。
 
+---
+
+## 07-组件的组合使用
+
+### 重点
+- 介绍组件组合的核心思想：把复杂页面拆成多个子组件，通过父组件管理状态并向子组件传递数据和方法。
+- 强调“状态在哪个组件中，更新状态的方法就在哪个组件中”。
+- 演示父组件通过 props 将数据和回调函数传递给子组件。
+
+### 用法
+- 父组件定义状态和方法：
+  ```jsx
+  state = { todo: ['吃饭', '睡觉', '打豆豆'] }
+  addTodo = (data) => {
+    let { todo } = this.state
+    todo.push(data)
+    this.setState({ todo })
+  }
+  ```
+- 在父组件 render 中传递 props：
+  ```jsx
+  <Add count={todo.length} addTodo={this.addTodo} />
+  <Show todo={todo} />
+  ```
+- 子组件接收父组件传递来的 props：
+  ```jsx
+  let { count } = this.props
+  let { todo } = this.props
+  ```
+- 子组件通过 props 调用父组件方法，实现子组件向父组件通信：
+  ```jsx
+  let { addTodo } = this.props
+  addTodo(data)
+  ```
+
+### 注意事项
+- 父组件负责管理共享状态，子组件只负责展示和触发事件。
+- 如果子组件需要修改父组件状态，应通过父组件传递回调函数，而不是直接修改父组件 state。
+- 组件组合时，避免把业务逻辑写在子组件中，保持父组件为“容器组件”，子组件为“展示组件”。
+
+---
+
+## 08-受控组件&非受控组件
+
+### 重点
+- 介绍表单输入在 React 中的两种处理方式：受控组件和非受控组件。
+- 受控组件表示输入值由组件 state 管理；非受控组件表示输入值不保存在 state 中，而是通过 ref 获取 DOM 值。
+- 演示如何在同一个组件中同时使用受控和非受控组件。
+
+### 用法
+- 受控组件：
+  ```jsx
+  state = { username: '' }
+  handlerChange = (event) => {
+    this.setState({ username: event.target.value })
+  }
+  <input type="text" onChange={this.handlerChange} />
+  ```
+- 非受控组件：
+  ```jsx
+  myRef = React.createRef()
+  <input type="password" ref={this.myRef} />
+  let pwdDOM = this.myRef.current
+  ```
+- 表单提交时阻止默认行为：
+  ```jsx
+  handlerSubmit = (event) => {
+    event.preventDefault()
+    alert(`用户名是：${this.state.username}，密码：${this.myRef.current.value}`)
+  }
+  ```
+
+### 注意事项
+- 受控组件更适合需要实时校验、格式化、联动更新的表单项，因为输入值始终由 state 控制。
+- 非受控组件适合简单表单项或与第三方 DOM 库结合时使用，不需要实时保存输入值。
+- 在 `onChange` 中更新 state 时，输入框值应来自 `event.target.value`。
+- `event.preventDefault()` 用于阻止表单提交后页面刷新。
+- 同一组件中可以同时使用受控组件和非受控组件，但应明确区分哪部分数据由 state 管理、哪部分数据由 ref 读取。
+
