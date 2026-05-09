@@ -36,6 +36,7 @@
       }
 
       // 响应失去焦点的方法
+      // 使用事件委托的方式获取输入框中的值，避免过度使用ref
       handlerBlur = (event) => {
         console.log(event.target.value);
       }

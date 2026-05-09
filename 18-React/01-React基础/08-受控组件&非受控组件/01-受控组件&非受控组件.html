@@ -27,17 +27,15 @@
 
     class Login extends React.Component {
 
-      myRef = React.createRef()
-
+      // 受控组件：输入项在输入时会自动将内容维护到state中
       state = { username: '' }
-
       handlerChange = (event) => {
-        let { username } = this.state
         let data = event.target.value
-        username = data
-        this.setState({ username })
+        this.setState({ username: data })
       }
 
+      // 非受控组件：即不会维护到state中，需要用的时候通过ref获取DOM元素，进而获取输入项的值
+      myRef = React.createRef()
       handlerSubmit = (event) => {
         // 阻止默认事件(页面跳转)
         event.preventDefault()
