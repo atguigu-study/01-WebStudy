@@ -33,8 +33,6 @@
         alert(input2.value)
       }
 
-      // state 更新过程中，ref回调函数会被调用2次
-      // 第一次传入的参数为null，第二次传入的参数为DOM元素
       state = {
         clickCnt: 0
       }
@@ -44,12 +42,18 @@
         })
       }
 
+      setInputRef = (element) => {
+        console.log('状态是', this.state.clickCnt);
+        console.log('输入的input是', element);
+        this.input1 = element
+      }
+
       render() {
         console.log('render函数被调用了');
         return (
           <div onClick={this.updateClickCnt}>
             <h2>当前点击次数：{this.state.clickCnt}</h2>
-            <input type="text" placeholder="点击按钮时提示" ref={(input) => { console.log('状态是', this.state.clickCnt); console.log('输入的input是', input); this.input1 = input }} />&nbsp;
+            <input type="text" placeholder="点击按钮时提示" ref={this.setInputRef} />&nbsp;
             <button onClick={this.clickHandle}>按钮</button>&nbsp;
             <input type="text" placeholder="失去焦点时提示" onBlur={this.blurHandle} ref={current => this.input2 = current} />
           </div>

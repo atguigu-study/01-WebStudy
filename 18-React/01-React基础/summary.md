@@ -1,4 +1,4 @@
-# 01-React基础 01、02 课总结
+# 01-React基础
 
 ## 01-HelloReact
 
@@ -53,12 +53,12 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 ```
 
 ### 注意事项
-- JSX 需要通过 Babel 转换成 `React.createElement` 调用。
-- JSX 标签属性值可以是 JS 表达式，写在 `{}` 中。只能写 JS 表达式，不能写 JS 语句。
-- 标签属性 `class` 需改为 `className`，否则会报错。
-- 内联样式写法：`style={{ color: 'red' }}`
+- JSX 需要通过 Babel 转换成 `React.createElement` 调用，创建虚拟 DOM。
 - 虚拟DOM只能有一个根节点，不支持多个根节点，可以使用 `<div>`或者 `<></>` 包裹多个根节点。
-- 标签要闭合，否则报错：`Uncaught SyntaxError: Inline Babel script: Unterminated JSX contents`
+- JSX 标签属性可以是 JS 表达式，写在 `{}` 中。只能写 JS 表达式，不能写 JS 语句。
+- 内联样式写法：`style={{ color: 'red' }}` ，外层 {} 表示是 JS 表达式，内层 {} 表示是 JS 对象。
+- JSX 标签属性 `class` 需改为 `className`，否则会报错。
+- JSX 内部标签要闭合，否则报错：`Uncaught SyntaxError: Inline Babel script: Unterminated JSX contents`
 - 标签首字母：
   - 如果小写，会被解析成 HTML 标签（如果不存在，报错为`The tag <good> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.`）
   - 如果大写，会被解析成自定义标签（如果未定义，报错为`Uncaught ReferenceError: Good is not defined`）。
@@ -83,7 +83,7 @@ ReactDOM.render(vDOM, document.getElementById('test'))
   - 类组件创建实例后调用 `render()` 方法返回 JSX。
 
 ### 注意事项
-- 组件不是vDOM，渲染组件时需要用标签包裹，不能像vDOM那样直接放在第一个参数中，否则会报错 `Warning: Functions are not valid as a React child. This may happen if you return a Component instead of <Component /> from render. Or maybe you want to call this function rather than return it.`
+- 组件不是vDOM，渲染组件时需要用标签包裹，不能像vDOM那样直接放在第一个参数中 `ReactDOM.render(MyComponent, element)` ，否则会报错 `Warning: Functions are not valid as a React child. This may happen if you return a Component instead of <Component /> from render. Or maybe you want to call this function rather than return it.`
 - 组件名首字母必须大写；小写组件名会被当作 HTML 标准标签处，报错 ``The tag <myComponent> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.``。
 - 函数组件内部 `this` 为 `undefined` （严格模式下babel 会把自定义函数内原本指向window的 `this` 转换成 `undefined` ）。
 - 类组件中的 `this` 指向组件实例，可以访问 `this.props` 和 `this.state`。
@@ -128,7 +128,7 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 ### 注意事项
 - 在 JSX 中绑定事件处理函数：`onClick={this.handleClick}` 
   -  React重新封装了事件，`onclick` 要使用驼峰命名。
-  -  事件处理函数要用{}，不能像原生js那样用字符串。
+  -  事件处理函数要用 `{}` ，不能像原生js那样用字符串。
   -  `onClick={this.handleClick()}` 会在渲染时执行函数，并且把函数调用的返回值赋给 `onClick`，点击时就不会调用事件处理函数。
   -  在React中获取原生事件：`e.nativeEvent`
 - 由于事件处理函数 `this.handleClick` 是作为 `onClick` 的回调，所以不是通过实例调用的，是直接调用；并且类中的方法（constructor和render除外）默认开启了局部严格模式，所以在事件处理函数中 `this` 为 `undefined`。
@@ -155,13 +155,13 @@ ReactDOM.render(vDOM, document.getElementById('test'))
   ```jsx
   <Person name={p1.name} sex={p1.sex} age={p1.age} />
   ```
-- 使用展开运算符传递对象所有属性：
+- 使用展开运算符将对象的所有属性通过props传递：
   ```jsx
   <Person {...p2} />
   ```
 - 在类组件中访问 props：`this.props` 或解构 `let { name, age, sex } = this.props`
 - 在函数组件中访问 props：通过函数参数 `function Person(props) { ... }`
-- 设置 props 类型验证（需引入 `prop-types.js`）：
+- 对props中属性进行类型限制，和必要性限制（需引入 `prop-types.js`）：
   ```jsx
   static propTypes = {
     name: PropTypes.string.isRequired,
@@ -195,3 +195,48 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - state 改变时会触发重新渲染；props 改变也会触发重新渲染。
 - 简写方式（箭头函数、直接赋值 state）是现代 React 类组件的标准写法，推荐使用。
 - 后续学习中，函数组件配合 Hooks 会逐步取代类组件的地位。
+
+---
+
+## 06-ref
+
+### 重点
+- 介绍 React 中 `ref` 的用途：获取真实 DOM 节点或组件实例，以便直接操作元素。
+- 演示三种常见 ref 写法：字符串形式、回调形式、`React.createRef()` 形式。
+- 说明字符串形式 `ref` 已不推荐使用，建议改用回调 `ref` 或 `createRef`。
+- 介绍 React 16.8+ 的 Hooks `useRef()`，用于函数组件中创建可变 ref 对象。
+
+### 用法
+- 字符串形式：
+  ```jsx
+  <input ref="input1" />
+  alert(this.refs.input1.value)
+  ```
+- 回调形式：
+  ```jsx
+  <input ref={(currentNode) => { this.input = currentNode }} />
+  alert(this.input.value)
+  ```
+- `createRef` 形式：
+  ```jsx
+  myRef = React.createRef()
+  <input ref={this.myRef} />
+  alert(this.myRef.current.value)
+  ```
+- Hooks `useRef`（函数组件中使用）：
+  ```jsx
+  const inputRef = useRef(null)
+  return <input ref={inputRef} />
+  ```
+
+### 注意事项
+- 字符串形式 `ref` 已被官方弃用，性能较差，不建议新项目使用。
+- 回调 ref 可以在组件实例上保存 DOM 引用，适合需要自定义 ref 行为的场景。
+  - 回调 ref 在更新时会被调用2次，第一次传入参数 null ，第二次传入 DOM 节点。
+  ![ref_callback](images/ref_callback.png)
+  - 通过将 ref 的回调函数定义为 class 的绑定函数的方式，可以避免上述问题
+  ![ref_call_once](images/ref_call_once.png)
+- `React.createRef()` 返回一个对象容器，`current` 属性会指向当前 DOM 节点；每次重新渲染时如果在 render 内重新创建 ref 会失去引用，因此应在类属性或 constructor 中创建。
+- Hooks `useRef()` 只能用于函数组件，用于创建一个在组件整个生命周期内保持不变的引用对象。
+- 不要使用 `ref` 替代正常的数据流，`ref` 适合处理 focus、选择文本、动画、第三方 DOM 库等场景。
+
