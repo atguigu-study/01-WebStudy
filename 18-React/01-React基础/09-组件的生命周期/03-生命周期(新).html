@@ -30,6 +30,27 @@
      * 3. componentWillUpdate
      */
 
+     /**
+     * 1.初始化
+     * 触发条件：由 ReactDOM.render(<MyComponent/>) 初次渲染时
+     * constructor()
+     * getDerivedStateFromProps()
+     * render():提供虚拟DOM，可能会调用多次
+     * componentDidMount()：启动定时器、发送Ajax请求、订阅消息，只执行一次
+     * 
+     * 2.更新
+     * 触发条件：组件内部 this.setState({})
+     * getDerivedStateFromProps()
+     * shouldComponentUpdate()
+     * render()
+     * getSnapshotBeforeUpdate()
+     * componentDidUpdate()
+     * 
+     * 3.卸载
+     * 触发条件：ReactDOM.unmountComponentAtNode()
+     * componentWillUnmount()：收尾工作，例如：清除定时器，取消订阅，只执行一次（若不清除定时器则会报错：不能在组件被卸载后更新组件）
+     */
+
     class NewsList extends React.Component {
       constructor(props) {
         console.log('--constructor--')
