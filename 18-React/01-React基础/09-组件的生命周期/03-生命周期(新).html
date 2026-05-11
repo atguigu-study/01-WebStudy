@@ -3,14 +3,24 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>声明周期 (新)</title>
+  <title>生命周期 (新)</title>
+  <style>
+    .list {
+      width: 200px;
+      height: 150px;
+      overflow: auto;
+    }
+    .news {
+      height: 30px;
+    }
+  </style>
 </head>
 
 <body>
   <div id="example"></div>
 
-  <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
   <script type="text/javascript" src="../js/babel.min.js"></script>
   <script type="text/babel">
     /**
@@ -20,11 +30,11 @@
      * 3. componentWillUpdate
      */
 
-    class Life extends React.Component {
+    class NewsList extends React.Component {
       constructor(props) {
         console.log('--constructor--')
         super(props)
-        this.state = { opacity: 1 }
+        this.state = { newsArr: [] };
       }
 
       // getDerivedStateFromProps
@@ -34,21 +44,23 @@
        * 必须有返回值
        */
       static getDerivedStateFromProps(props, state) {
-        console.log('--getDerivedStateFromProps--')
+        console.log('--getDerivedStateFromProps--', props, state)
         return null
       }
 
       // 组件挂载完成
       componentDidMount() {
         console.log('--componentDidMount--')
-        this.timeID = setInterval(() => {
-          let { opacity } = this.state
-          opacity -= 0.1
-          if (opacity <= 0) {
-            opacity = 1
-          }
-          this.setState({ opacity })
-        }, 200)
+        this.timerID = setInterval(() => {
+          const { newsArr } = this.state;
+          const news = `新闻${newsArr.length + 1}`;
+          this.setState({ newsArr: [news, ...newsArr] })
+        }, 1000)
+      }
+
+      shouldComponentUpdate() {
+        console.log('--shouldComponentUpdate--')
+        return true;
       }
 
       // getSnapshotBeforeUpdate
@@ -58,44 +70,42 @@
        * 必须与componentDidUpdate配合使用
        * 必须有返回值
        */
-      getSnapshotBeforeUpdate(props, state) {
-        console.log('--getSnapshotBeforeUpdate--')
-        return null
+      getSnapshotBeforeUpdate(prevProps, prevState) {
+        console.log('--getSnapshotBeforeUpdate--', prevProps, prevState)
+        return this.refs.list.scrollHeight;
       }
 
       // 更新完毕组件
       /**
        * 接收三个参数，分别是props、state和getSnapshotBeforeUpdate中传过来的值
        */
-      componentDidUpdate(props, state, data) {
-        console.log('--componentDidUpdate--')
+      componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('--componentDidUpdate--', prevProps, prevState, snapshot);
+        this.refs.list.scrollTop += this.refs.list.scrollHeight - snapshot;
       }
 
-      death = () => {
-        // 卸载组件
-        ReactDOM.unmountComponentAtNode(document.getElementById('example'))
-        // clearInterval(this.timeID)
-      }
 
       // 即将卸载组件
       componentWillUnmount() {
         console.log('--componentWillUnmount--')
-        clearInterval(this.timeID)
+        clearInterval(this.timerID)
       }
 
       render() {
         console.log('--render--')
-        let { opacity } = this.state
         return (
-          <div>
-            <h2 style={{ opacity }}>react学不会怎么办？</h2>
-            <button onClick={this.death}>不活了</button>
+          <div className="list" ref="list">
+            {
+              this.state.newsArr && this.state.newsArr.map((item, index) => {
+                return <div key={index} className="news">{item}</div>
+              })
+            }
           </div>
         )
       }
     }
 
-    ReactDOM.render(<Life />, document.getElementById('example'))
+    ReactDOM.render(<NewsList />, document.getElementById('example'))
   </script>
 </body>
 
