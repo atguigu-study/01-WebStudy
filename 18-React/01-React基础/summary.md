@@ -232,9 +232,9 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 ### 注意事项
 - 字符串形式 `ref` 已被官方弃用，性能较差，不建议新项目使用。
 - 回调 ref 可以在组件实例上保存 DOM 引用，适合需要自定义 ref 行为的场景。
-  - 回调 ref 在更新时会被调用2次，第一次传入参数 null ，第二次传入 DOM 节点。
+  - 回调 ref 在更新时会被调用2次，第一次传入参数 null ，第二次传入 DOM 节点。  
   ![ref_callback](images/ref_callback.png)
-  - 通过将 ref 的回调函数定义为 class 的绑定函数的方式，可以避免上述问题
+  - 通过将 ref 的回调函数定义为 class 的绑定函数的方式，可以避免上述问题  
   ![ref_call_once](images/ref_call_once.png)
 - `React.createRef()` 返回一个对象容器，`current` 属性会指向当前 DOM 节点；每次重新渲染时如果在 render 内重新创建 ref 会失去引用，因此应在类属性或 constructor 中创建。
 - Hooks `useRef()` 只能用于函数组件，用于创建一个在组件整个生命周期内保持不变的引用对象。
@@ -318,4 +318,35 @@ ReactDOM.render(vDOM, document.getElementById('test'))
 - 在 `onChange` 中更新 state 时，输入框值应来自 `event.target.value`。
 - `event.preventDefault()` 用于阻止表单提交后页面刷新。
 - 同一组件中可以同时使用受控组件和非受控组件，但应明确区分哪部分数据由 state 管理、哪部分数据由 ref 读取。
+
+---
+
+## 09-组件的生命周期
+
+### 重点
+- 介绍 React 类组件的生命周期阶段：挂载、更新、卸载。
+- 比较旧生命周期和新生命周期的差异，说明哪些旧钩子已被废弃。
+
+### 用法
+- 旧生命周期阶段：
+  - 初始化：`constructor` -> `componentWillMount` -> `render` -> `componentDidMount`
+  - 更新：`componentWillReceiveProps` -> `shouldComponentUpdate` -> `componentWillUpdate` -> `render` -> `componentDidUpdate`
+  - 卸载：`componentWillUnmount`
+- 新生命周期中常用写法：
+  - `static getDerivedStateFromProps(props, state)`：在 render 之前调用，用于根据 props 更新 state，必须返回对象或 null。
+  - `render()`：渲染虚拟 DOM。
+  - `getSnapshotBeforeUpdate(prevProps, prevState)`：在 DOM 更新前调用，返回值会传给 `componentDidUpdate`。
+  - `componentDidUpdate(prevProps, prevState, snapshot)`：组件更新后调用。
+  - `componentWillUnmount()`：组件卸载前清理定时器、事件监听等。
+- 典型用法：在 `componentDidMount` 中启动定时器或发起请求，在 `componentWillUnmount` 中清除定时器。
+
+### 注意事项
+- `componentWillMount`、`componentWillReceiveProps`、`componentWillUpdate` 属于旧生命周期，React 16 以后不推荐使用。
+- `getDerivedStateFromProps` 是静态方法，不能访问实例 `this`，只能根据 props 和 state 计算并返回新的 state。
+- `getSnapshotBeforeUpdate` 必须与 `componentDidUpdate` 配合使用，常用于读取更新前的 DOM 信息。
+- 在 `componentDidMount` 中执行副作用时，要确保后续卸载阶段清理资源，否则会出现“组件卸载后仍更新状态”的错误。
+- `componentWillUnmount` 只执行一次，用于清理定时器、取消订阅、移除事件监听等。
+- `render` 可能会被调用多次，不要在 `render` 中执行副作用逻辑。
+- `componentWillReceiveProps` 只在 props 发生变化时调用，不会在组件初始化时调用。
+
 

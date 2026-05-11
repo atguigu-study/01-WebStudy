@@ -23,21 +23,36 @@
 
     /**
      * 1.初始化
-     * 触发条件：ReactDOM.render(<MyComponent/>)
+     * 触发条件：由 ReactDOM.render(<MyComponent/>) 初次渲染时
      * constructor()
      * componentWillMount()
      * render():提供虚拟DOM，可能会调用多次
-     * componentDidMount()：启动定时器、发送Ajax请求、只执行一次
+     * componentDidMount()：启动定时器、发送Ajax请求、订阅消息，只执行一次
      * 
-     * 2.更新
-     * 触发条件：this.setState({})
+     * 2.父组件传递props更新子组件
+     * 触发条件：父组件重新render时（第一次渲染时不会触发）
+     * componentWillReceiveProps()
+     * shouldComponentUpdate()
      * componentWillUpdate()
      * render()
      * componentDidUpdate()
      * 
-     * 3.卸载
+     * 3.更新
+     * 触发条件：组件内部 this.setState({})
+     * shouldComponentUpdate()
+     * componentWillUpdate()
+     * render()
+     * componentDidUpdate()
+     * 
+     * 4.强制更新
+     * 触发条件：组件内部 this.forceUpdate()
+     * componentWillUpdate()
+     * render()
+     * componentDidUpdate()
+     * 
+     * 5.卸载
      * 触发条件：ReactDOM.unmountComponentAtNode()
-     * componentWillUnmount()：收尾工作，例如：清除定时器，只执行一次(若不清除定时器则会报错：不能在组件被卸载后更新组件)
+     * componentWillUnmount()：收尾工作，例如：清除定时器，取消订阅，只执行一次（若不清除定时器则会报错：不能在组件被卸载后更新组件）
      * 
      * 在这几个生命周期内this都为组件的实例对象
      */
@@ -59,12 +74,12 @@
         console.log('--componentDidMount--')
         this.timeID = setInterval(() => {
           let { opacity } = this.state
-          opacity -= 0.1
+          opacity -= 0.2
           if (opacity <= 0) {
             opacity = 1
           }
           this.setState({ opacity })
-        }, 200)
+        }, 1000)
       }
 
       death = () => {
@@ -73,10 +88,24 @@
         // clearInterval(this.timeID)
       }
 
+      force = () => {
+        console.log('--forceUpdate--')
+        this.forceUpdate()
+      }
+
       // 即将卸载组件
       componentWillUnmount() {
         console.log('--componentWillUnmount--')
         clearInterval(this.timeID)
+      }
+
+      componentWillReceiveProps() {
+        console.log('--componentWillReceiveProps--')
+      }
+
+      shouldComponentUpdate() {
+        console.log('--shouldComponentUpdate--')
+        return true;
       }
 
       // 即将更新组件
@@ -96,6 +125,7 @@
           <div>
             <h2 style={{ opacity }}>react学不会怎么办？</h2>
             <button onClick={this.death}>不活了</button>
+            <button onClick={this.force}>强制更新</button>
           </div>
         )
       }
