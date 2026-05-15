@@ -26,6 +26,7 @@ app.use('/students', studentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  console.log('server requested...', req.get('host'));
   next(createError(404));
 });
 
