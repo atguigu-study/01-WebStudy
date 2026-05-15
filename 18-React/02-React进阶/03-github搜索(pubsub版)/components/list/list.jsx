@@ -11,30 +11,26 @@ export default class List extends Component {
   }
 
   componentDidMount() {
-    // 完成消息订阅
-    PubSub.subscribe('updateState', (msg, data) => {
+    this.token = PubSub.subscribe('updateState', (_, data) => {
       this.setState(data)
     })
   }
 
+  componentWillUnmount() {
+    PubSub.unsubscribe(this.token)
+  }
+
   render() {
-    let { user, isFirst, isLoading, error } = this.state
-    if (isFirst) {
-      return <h2>请输入关键词以搜索用户</h2>
-    } else if (isLoading) {
-      return <h2>Loading...</h2>
-    } else if (error) {
-      return <h2>{error}</h2>
-    } else {
-      return (
-        <div className="row">
-          {
-            user.map((item) => {
-              return <Item key={item.login} {...item} />
-            })
-          }
-        </div>
-      )
-    }
+    const { user, isFirst, isLoading, error } = this.state
+    return <div className="row">
+      {
+        isFirst ? <h2>请输入关键词以搜索用户</h2> :
+          isLoading ? <h2>Loading...</h2> :
+            error ? <h2>{error}</h2> :
+              user.map((item) => {
+                return <Item key={item.login} {...item} />
+              })
+      }
+    </div>
   }
 }

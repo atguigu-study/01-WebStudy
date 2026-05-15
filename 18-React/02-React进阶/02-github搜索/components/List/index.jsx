@@ -3,7 +3,7 @@ import Item from '../Item'
 
 export default class List extends Component {
   render() {
-    let { user, isFirst, isLoading, error } = this.props
+    const { user, isFirst, isLoading, error } = this.props
     return <div className="row">
       {
         isFirst ? <h2>请输入关键词以搜索用户</h2> :
