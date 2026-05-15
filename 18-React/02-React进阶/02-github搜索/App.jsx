@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import Search from './components/search/search'
-import List from './components/list/list'
+import Search from './components/Search'
+import List from './components/List'
 
 export default class MyComponent extends Component {
   state = {

@@ -21,9 +21,9 @@ export default class Search extends Component {
       error: ''
     })
     axios.get(URL)
-      .then((value) => {
+      .then((resp) => {
         updateState({
-          user: value.data.items,
+          user: resp.data.items,
           isFirst: false,
           isLoading: false,
           error: ''
