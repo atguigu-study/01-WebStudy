@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import axios from 'axios';
+
 import Header from './components/Header';
 import List from './components/List';
 import Footer from './components/Footer';
@@ -52,6 +54,14 @@ export default class App extends Component {
     this.setState({ todos: newTodos });
   }
 
+  getStudentList = async () => {
+    axios.get('http://localhost:3000/api1/students').then((res) => console.log(res.data), (err) => console.log(err));
+  }
+
+  getCarList = async () => {
+    axios.get('http://localhost:3000/api2/cars').then((res) => console.log(res.data), (err) => console.log(err));
+  }
+
   render() {
     const { todos } = this.state;
     return (
@@ -59,6 +69,8 @@ export default class App extends Component {
         <Header addTodo={this.addTodo} />
         <List todos={todos} updateTodo={this.updateTodo} deleteTodo={this.deleteTodo} />
         <Footer todos={todos} checkAllTodo={this.checkAllTodo} clearAllDone={this.clearAllDone} />
+        <button onClick={this.getStudentList}>获取学生列表</button>
+        <button onClick={this.getCarList}>获取汽车列表</button>
       </div>
     )
   }
