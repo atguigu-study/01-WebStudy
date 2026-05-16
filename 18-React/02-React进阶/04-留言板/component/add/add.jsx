@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import uuid from 'uuid'
+import { uuid } from 'uuid'
 
 export default class Add extends Component {
   // 添加评论

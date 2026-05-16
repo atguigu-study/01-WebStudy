@@ -2,6 +2,8 @@ import React from 'react'
 import { NavLink, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
+import Test from './pages/Test'
+import MyNavLink from './components/MyNavLink'
 
 export default function App() {
   return (
@@ -17,8 +19,9 @@ export default function App() {
         <div className="col-xs-2 col-xs-offset-2">
           <div className="list-group">
             {/* 路由链接 */}
-            <NavLink className="list-group-item" to="/about">About</NavLink>
-            <NavLink className="list-group-item" to="/home">Home</NavLink>
+            <NavLink activeClassName="active" className="list-group-item" to="/about">About</NavLink>
+            <NavLink activeClassName="active" className="list-group-item" to="/home">Home</NavLink>
+            <MyNavLink to="/test">Test</MyNavLink>
           </div>
         </div>
         <div className="col-xs-6">
@@ -28,6 +31,7 @@ export default function App() {
               <Routes>
                 <Route path="/about" element={<About />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/test" element={<Test />} />
                 <Route path="/" element={<Navigate to="/about" />}></Route>
               </Routes>
             </div>
