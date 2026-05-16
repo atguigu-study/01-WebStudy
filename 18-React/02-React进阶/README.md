@@ -23,12 +23,17 @@
   <Route path="/about" element={<About />} />
   ```
 - `<App>` 的最外侧包裹了一个 `<BrowserRouter>` 或者 `<HashRouter>`
+- `<Navigate>` 可以实现路由的重定向, ~~(ReactRouter6 版本中已删除)~~
+  ```jsx
+  <Route path="/" element={<Navigate to="/home" />}></Route>
+  ```
 
 ### 注意事项
 - 如果2个 `Route` 的路径是一样的，那么只会匹配到第一个 `Route`
+- 默认使用的是模糊匹配（输入的路径必须包含匹配的路径，切顺序要一致），开启严格匹配用 `exact`，严格匹配不要随便开启，需要再开，有些时候开启会导致无法继续匹配二级路由  
 - 多级路径刷新页面，导致页面样式丢失的问题：
   1. `public/index.html` 中引入样式时，写 `/` 不写 `./`  
-  2. `public/index.html` 中引入脚本时，写 `%PUBLIC_URL%` 不写 `/`
+  2. `public/index.html` 中引入脚本时，写 `%PUBLIC_URL%`（仅限react脚手架项目） 不写 `/`
   3. 使用 `<HashRouter>`
 
 ---
