@@ -19,8 +19,8 @@ export default function App() {
         <div className="col-xs-2 col-xs-offset-2">
           <div className="list-group">
             {/* 路由链接 */}
-            <NavLink activeClassName="active" className="list-group-item" to="/about">About</NavLink>
-            <NavLink activeClassName="active" className="list-group-item" to="/home">Home</NavLink>
+            <NavLink className="list-group-item" to="/about">About</NavLink>
+            <NavLink className="list-group-item" to="/home">Home</NavLink>
             <MyNavLink to="/test">Test</MyNavLink>
           </div>
         </div>
