@@ -14,6 +14,10 @@ const routes = [
     element: <Home />,
     children: [
       {
+        index: true,
+        element: <News />
+      },
+      {
         path: 'news',
         element: <News />
       },
