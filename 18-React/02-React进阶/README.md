@@ -67,3 +67,45 @@
 ---
 
 
+## 04-嵌套路由
+
+### 用法
+- 在路由配置中通过 `children` 字段定义子路由（子路由的 `path` 不以 `/` 开头，表示相对路径）。
+- 可以使用 `index: true` 指定默认子路由（当访问父路径时显示的默认页面）。
+- 父路由组件中使用 `<Outlet />` 指定子路由渲染位置。
+- 可在路由配置中使用 `<Navigate>` 做重定向，或在父路由中设置子路由默认项。
+- 在 `NavLink` 或 `Link` 中，链接地址应与子路由路径保持一致（例如 `/home/news`）。
+
+示例（路由配置）：
+```jsx
+const routes = [
+  { path: '/', element: <Navigate to="about" /> },
+  {
+    path: '/home',
+    element: <Home />,
+    children: [
+      { index: true, element: <News /> },
+      { path: 'news', element: <News /> },
+      { path: 'message', element: <Message /> }
+    ]
+  },
+  { path: '/about', element: <About /> }
+]
+```
+
+父组件 `Home` 中的占位符示例：
+```jsx
+function Home() {
+  return (
+    <div>
+      <NavLink className="list-group-item" to="/home/news">News</NavLink> {/* 链接地址应与子路由路径保持一致 */}
+      <NavLink className="list-group-item" to="/home/message">Message</NavLink>
+      <Outlet /> {/* 子路由渲染在这里 */}
+    </div>
+  )
+}
+```
+
+
+
+
