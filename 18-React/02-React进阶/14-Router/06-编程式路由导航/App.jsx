@@ -1,16 +1,14 @@
 import React from 'react'
-import { NavLink, useRoutes } from 'react-router-dom'
-import routes from './router/router'
+import { NavLink } from 'react-router-dom'
+import Routes from './router'
+import Header from './pages/Header'
 
 export default function App() {
-  const element = useRoutes(routes)
   return (
     <div>
       <div className="row">
         <div className="col-xs-offset-2 col-xs-8">
-          <div className="page-header">
-            <h2>React Router Demo</h2>
-          </div>
+          <Header />
         </div>
       </div>
       <div className="row">
@@ -24,8 +22,7 @@ export default function App() {
         <div className="col-xs-6">
           <div className="panel">
             <div className="panel-body">
-              {/* 注册路由 */}
-              {element}
+              <Routes />
             </div>
           </div>
         </div>
