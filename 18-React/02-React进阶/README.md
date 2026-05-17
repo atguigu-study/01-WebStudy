@@ -77,7 +77,7 @@
 - 可在路由配置中使用 `<Navigate>` 做重定向，或在父路由中设置子路由默认项。
 - 在 `NavLink` 或 `Link` 中，链接地址应与子路由路径保持一致（例如 `/home/news`）。
 
-示例（路由配置）：
+路由配置：
 ```jsx
 const routes = [
   { path: '/', element: <Navigate to="about" /> },
@@ -224,15 +224,16 @@ const { state: { id, title, content } } = useLocation()
 - 通过 `navigate('detail', { replace: false, state: { ... } })` 实现动态跳转。
 - `navigate()` 也支持数字参数：`navigate(1)` 前进，`navigate(-1)` 后退。
 
-示例：
 ```jsx
+import { useNavigate } from 'react-router-dom'
+
 const navigate = useNavigate()
-function jumpDetail(item) {
+
+function showDetailPanel(item) {
   navigate('detail', {
     replace: false,
     state: {
       id: item.id,
-      title: item.title,
       content: item.content
     }
   })
@@ -240,7 +241,7 @@ function jumpDetail(item) {
 ```
 
 ### 注意事项
-- 编程式导航可以在事件处理函数中使用，不依赖 `<Link>`。
+- 编程式导航可以在事件处理函数中使用，不依赖 `<Link>` , `<NavLink>`。
 - 相对路径会基于当前路由自动拼接。
 - `replace: true` 可以替换当前历史记录，避免返回到当前页。
 
