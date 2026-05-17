@@ -70,7 +70,7 @@
 ## 04-嵌套路由
 
 ### 用法
-- 在路由配置中通过 `children` 字段定义子路由（子路由的 `path` 不以 `/` 开头，表示相对路径）。
+- 在路由配置中通过 `children` 字段定义子路由（子路由的 `path` 不以 `/` 开头，子路由路径会自动拼接到父路由后面）。
 - 可以使用 `index: true` 指定默认子路由（当访问父路径时显示的默认页面）。
 - 父路由组件中使用 `<Outlet />` 指定子路由渲染位置。
 - 可在路由配置中使用 `<Navigate>` 做重定向，或在父路由中设置子路由默认项。
@@ -105,6 +105,143 @@ function Home() {
   )
 }
 ```
+
+---
+
+## 05-路由参数（params）
+
+### 用法
+- params 参数通过 URL 片段传递，路由注册中使用 `:id` 之类的占位符。
+- 路由链接写法示例：`to={`detail/${item.id}`}`。
+- 在接收组件中用 `useParams()` 获取参数。
+
+路由注册：
+```jsx
+{
+  path: 'message',
+  element: <Message />,
+  children: [
+    { path: 'detail/:id', element: <Detail /> }
+  ]
+}
+```
+
+路由链接
+```jsx
+<Link to={`detail/${item.id}`}>链接标题</Link>
+{/* 指定路由展示的位置 */}
+<Outlet />
+```
+
+接收参数：
+```jsx
+import { useParams } from 'react-router-dom'
+
+const { id, title, content } = useParams()
+```
+
+### 注意事项
+- params 直接写在路径中
+- 接收参数时要与路由配置里的变量名一致。如果参数可能不存在，接收组件需要做容错处理。
+
+---
+
+## 06-路由参数（search）
+
+### 用法
+- search 参数通过 URL 查询字符串传递，路由注册中只需定义目标路径，不需要 `:key` 占位符。
+- 路由注册中只需定义目标路径，不需要 `:key` 占位符。
+- 在接收组件中用 `useSearchParams()` 获取参数。
+
+路由注册：
+```jsx
+{
+  path: 'message',
+  element: <Message />,
+  children: [
+    { path: 'detail', element: <Detail /> }
+  ]
+}
+```
+
+路由链接：
+```jsx
+<Link to={`detail?id=${item.id}&title=${item.title}&content=${item.content}`}>链接标题</Link>
+{/* 指定路由展示的位置 */}
+<Outlet />
+```
+
+接收参数：
+```jsx
+import { useSearchParams } from 'react-router-dom'
+
+const [search] = useSearchParams()
+const id = search.get('id')
+const title = search.get('title')
+const content = search.get('content')
+```
+
+### 注意事项
+- search 参数没有类型信息，接收到的都是字符串。
+- 查询参数需要使用 `get()` 逐个读取。
+- 字符串中出现特殊字符时应该进行编码（例如 `encodeURIComponent`）。
+
+---
+
+## 07-路由参数（state）
+
+### 用法
+- state 参数通过 `Link` 或 `navigate()` 的 `state` 属性传递。
+- 路由配置与 search 参数类似，只要定义目标路径即可。
+- 在接收组件中用 `useLocation()` 读取 `location.state`。
+
+路由链接：
+```jsx
+<Link to="detail" state={{ id: item.id, title: item.title, content: item.content }}>链接标题</Link>
+{/* 指定路由展示的位置 */}
+<Outlet />
+```
+
+接收参数：
+```jsx
+import { useLocation } from 'react-router-dom'
+
+const { state: { id, title, content } } = useLocation()
+```
+
+### 注意事项
+- state 参数不会出现在 URL 中，适合传递临时数据。
+- 刷新页面后 `location.state` 可能会丢失，不能当作永久存储。
+- state保存在 `window.history.state.usr`
+
+---
+
+## 08-编程式路由导航
+
+### 用法
+- 使用 `useNavigate()` 获得导航函数 `navigate`。
+- 通过 `navigate('detail', { replace: false, state: { ... } })` 实现动态跳转。
+- `navigate()` 也支持数字参数：`navigate(1)` 前进，`navigate(-1)` 后退。
+
+示例：
+```jsx
+const navigate = useNavigate()
+function jumpDetail(item) {
+  navigate('detail', {
+    replace: false,
+    state: {
+      id: item.id,
+      title: item.title,
+      content: item.content
+    }
+  })
+}
+```
+
+### 注意事项
+- 编程式导航可以在事件处理函数中使用，不依赖 `<Link>`。
+- 相对路径会基于当前路由自动拼接。
+- `replace: true` 可以替换当前历史记录，避免返回到当前页。
 
 
 
