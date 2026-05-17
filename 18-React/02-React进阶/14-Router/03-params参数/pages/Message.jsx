@@ -3,9 +3,9 @@ import { Link, Outlet } from 'react-router-dom'
 
 export default function Message() {
   const [messages] = useState([
-    { id: '1', title: '消息1', content: '内容1' },
-    { id: '2', title: '消息2', content: '内容2' },
-    { id: '3', title: '消息3', content: '内容3' },
+    { id: '1', title: '消息1' },
+    { id: '2', title: '消息2' },
+    { id: '3', title: '消息3' },
   ])
   return (
     <div>
@@ -14,7 +14,7 @@ export default function Message() {
           messages.map((item) => {
             return (
               <li key={item.id}>
-                <Link to={`detail/${item.id}/${item.title}/${item.content}`}>{item.content}</Link>
+                <Link to={`detail/${item.id}`}>{item.title}</Link>
               </li>
             )
           })

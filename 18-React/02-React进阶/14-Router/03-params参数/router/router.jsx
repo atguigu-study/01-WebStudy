@@ -23,7 +23,7 @@ const routes = [
         element: <Message />,
         children: [
           {
-            path: 'detail/:id/:title/:content',
+            path: 'detail/:id',
             element: <Detail />
           }
         ]
