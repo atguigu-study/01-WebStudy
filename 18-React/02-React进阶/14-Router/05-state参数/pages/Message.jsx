@@ -14,7 +14,7 @@ export default function Message() {
           messages.map((item) => {
             return (
               <li key={item.id}>
-                <Link to="detail" state={{
+                <Link to="detail" replace state={{
                   id: item.id,
                   title: item.title,
                   content: item.content

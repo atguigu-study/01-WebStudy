@@ -52,6 +52,7 @@
 ## 03-NavLink与封装NavLink
 
 ### 用法
+- `replace` 属性可以实现路由跳转后不留下历史记录，把默认的 push 模式替换成 replace
 - `NavLink` 可以实现路由链接的高亮，~~通过 `activeClassName` 指定样式名（ReactRouter6 版本中已删除）~~
 - 标签体内容时一个特殊的标签属性 `children`
 - 通过 `this.props.children` 可以获取标签体内容
