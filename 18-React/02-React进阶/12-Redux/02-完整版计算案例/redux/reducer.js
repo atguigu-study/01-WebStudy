@@ -16,9 +16,9 @@ export default function countReducer(preState, action) {
 
   switch (type) {
     case INCREMENT:
-      return preState + data * 1
+      return preState + data
     case DECREMENT:
-      return preState - data * 1
+      return preState - data
     default:
       return preState
   }

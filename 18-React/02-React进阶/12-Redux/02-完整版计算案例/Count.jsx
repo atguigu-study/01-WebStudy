@@ -6,22 +6,22 @@ export default class index extends Component {
 
   increment = () => {
     const { value } = this.selectNumber
-    store.dispatch(incrementAction(value))
+    store.dispatch(incrementAction(value*1))
   }
   decrement = () => {
     const { value } = this.selectNumber
-    store.dispatch(decrementAction(value))
+    store.dispatch(decrementAction(value*1))
   }
   incrementOfOdd = () => {
     const count = store.getState()
     if (count % 2 === 0) return
     const { value } = this.selectNumber
-    store.dispatch(incrementAction(value))
+    store.dispatch(incrementAction(value*1))
   }
   incrementOfAsync = () => {
     const { value } = this.selectNumber
     setTimeout(() => {
-      store.dispatch(incrementAction(value))
+      store.dispatch(incrementAction(value*1))
     }, 1000)
   }
 
