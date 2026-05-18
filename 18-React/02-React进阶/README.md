@@ -45,6 +45,16 @@
   1. `public/index.html` 中引入样式时，写 `/` 不写 `./`  
   2. `public/index.html` 中引入脚本时，写 `%PUBLIC_URL%`（仅限react脚手架项目） 不写 `/`
   3. 使用 `<HashRouter>`
+- `<BrowserRouter>` 和 `<HashRouter>` 的区别
+  1. 底层原理不一样：
+   - `<BrowserRouter>` 用的是H5的 `history` API，不兼容 IE9 及以下版本
+   - `<HashRouter>` 用的是 URL 的 hash 值，兼容 IE9 及以下版本
+  2. path 表现形式不一样
+   - `<BrowserRouter>` 中的 path 为 `/` 开头，例如：localhost:3000/demo/test，请求会发给服务器
+   - `<HashRouter>` 中的 path 为 `#` 开头，例如：localhost:3000/#/demo/test，请求 **不会** 发给服务器
+  3. 刷新后对路由 `state` 参数的影响
+   - `<BrowserRouter>` 没有任何影响，因为 `state` 保存再 `history` 对象中
+   - `<HashRouter>` 刷新后会导致路由 `state` 参数丢失
 
 ---
 
@@ -222,6 +232,7 @@ const { state: { id, title, content } } = useLocation()
 ### 用法
 - 使用 `useNavigate()` 获得导航函数 `navigate`。
 - 通过 `navigate('detail', { replace: false, state: { ... } })` 实现动态跳转。
+- `replace: true` 可以替换当前历史记录，避免返回到当前页。
 - `navigate()` 也支持数字参数：`navigate(1)` 前进，`navigate(-1)` 后退。
 
 ```jsx
@@ -243,7 +254,8 @@ function showDetailPanel(item) {
 ### 注意事项
 - 编程式导航可以在事件处理函数中使用，不依赖 `<Link>` , `<NavLink>`。
 - 相对路径会基于当前路由自动拼接。
-- `replace: true` 可以替换当前历史记录，避免返回到当前页。
+- `withRouter` 在 React Router 6 中已废弃，函数组件可以直接使用 `useNavigate()`，不需要再通过 `HOC` 包裹。
+
 
 
 
