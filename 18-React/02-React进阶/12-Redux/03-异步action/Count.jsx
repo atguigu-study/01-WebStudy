@@ -7,24 +7,24 @@ export default class index extends Component {
   // 加
   increment = () => {
     const { value } = this.selectNumber
-    store.dispatch(incrementAction(value))
+    store.dispatch(incrementAction(value*1))
   }
   // 减
   decrement = () => {
     const { value } = this.selectNumber
-    store.dispatch(decrementAction(value))
+    store.dispatch(decrementAction(value*1))
   }
   // 和为奇数时再加
   incrementOfOdd = () => {
     const count = store.getState()
     if (count % 2 === 0) return
     const { value } = this.selectNumber
-    store.dispatch(incrementAction(value))
+    store.dispatch(incrementAction(value*1))
   }
   // 异步加
   incrementOfAsync = () => {
     const { value } = this.selectNumber
-    store.dispatch(incrementAsyncAction(value, 1000))
+    store.dispatch(incrementAsyncAction(value*1, 1000))
   }
 
   render() {

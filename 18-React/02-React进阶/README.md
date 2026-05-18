@@ -256,6 +256,90 @@ function showDetailPanel(item) {
 - 相对路径会基于当前路由自动拼接。
 - `withRouter` 在 React Router 6 中已废弃，函数组件可以直接使用 `useNavigate()`，不需要再通过 `HOC` 包裹。
 
+---
+
+## 12-Redux 小结
+
+### 01-精简版计算案例
+- 用途：展示 Redux 最小实现（单一 reducer、store、组件直接 dispatch action object）。
+- 关键点:
+  - `store` 通过 `legacy_createStore(reducer)` 创建；
+  - `reducer` 负责根据 `action.type` 更新状态；
+  - 组件通过 `store.dispatch({type, data})` 触发更新，并用 `store.getState()` 读取当前状态。
+
+创建 store:
+```javascript
+const store = legacy_createStore(countReducer)
+```
+
+编写 reducer：
+```javascript
+const initState = 0
+export default function countReducer(preState = initState, action) {
+  const { type, data } = action
+  switch (type) {
+    case 'increment': return preState + data
+    case 'decrement': return preState - data
+    default: return preState
+  }
+}
+```
+
+组件中获取状态，更新状态:
+```javascript
+const count = store.getState()
+
+store.dispatch({ type: 'increment', data: 1 })
+```
+
+### 02-完整版计算案例
+- 用途：把常量、action creators、reducer、store 分离成模块化结构，示例更贴合生产代码风格。
+- 关键点：
+  - 使用 `constant.js` 定义 action 类型常量，
+  - 使用 `actions.js` 导出 action creators（比如 `incrementAction(data)`），
+  - 组件通过 `store.dispatch(incrementAction(value))` 调用。
+
+constants:
+```javascript
+export const INCREMENT = 'increment'
+export const DECREMENT = 'decrement'
+```
+
+action creators:
+```javascript
+export const incrementAction = data => ({ type: INCREMENT, data })
+```
+
+组件中从 store 中读取状态，更新状态:
+```javascript
+store.dispatch(incrementAction(value))
+```
+
+### 03-异步action
+- 用途：展示如何使用 `redux-thunk` 支持异步逻辑（网络请求或定时器）再 dispatch 同步 action。
+- 关键点：
+  - store 在创建时通过 `applyMiddleware(thunk)` 注册中间件；
+  - 异步 action 返回一个函数，函数接收 `dispatch`，内部可在异步完成后 `dispatch` 同步 action。
+
+创建 store:
+```javascript
+const store = legacy_createStore(countReducer, applyMiddleware(thunk))
+```
+
+异步 action:
+```javascript
+export const incrementAsyncAction = (data, delay) => {
+  return (dispatch) => {
+    setTimeout(() => { dispatch(incrementAction(data)) }, delay)
+  }
+}
+```
+
+### 注意事项（适用于以上示例）
+- `state` 的单一来源由 `store` 保证，尽量避免直接在多处存放可变状态。
+- 组件不要直接修改 `state`，应通过 `dispatch` 发出 action，由 reducer 产生新 state。
+- 异步 action 在页面刷新时的 `state` 不持久化，必要时配合持久化方案（localStorage、后端）处理。
+
 
 
 
