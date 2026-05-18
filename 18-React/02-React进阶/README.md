@@ -263,9 +263,10 @@ function showDetailPanel(item) {
 ### 01-精简版计算案例
 - 用途：展示 Redux 最小实现（单一 reducer、store、组件直接 dispatch action object）。
 - 关键点:
-  - `store` 通过 `legacy_createStore(reducer)` 创建；
-  - `reducer` 负责根据 `action.type` 更新状态；
+  - 编写 `reducer` 负责根据 `action.type` 更新状态；
+  - `store` 通过 `legacy_createStore(reducer)` 创建，传入为其服务的 `reducer`；
   - 组件通过 `store.dispatch({type, data})` 触发更新，并用 `store.getState()` 读取当前状态。
+  - `main.js` 中检测 store 中状态的改变，一旦发生改变，重新渲染 `<App/>`。 redux 只负责管理状态，至于状态的改变驱动着页面的展示，要靠自己写
 
 创建 store:
 ```javascript
@@ -290,6 +291,13 @@ export default function countReducer(preState = initState, action) {
 const count = store.getState()
 
 store.dispatch({ type: 'increment', data: 1 })
+```
+
+监测状态变化，重新渲染组件:
+```javascript
+store.subscribe(() => {
+  root.render(<React.StrictMode><App /></React.StrictMode>)
+})
 ```
 
 ### 02-完整版计算案例
@@ -323,6 +331,9 @@ store.dispatch(incrementAction(value))
 
 创建 store:
 ```javascript
+import { legacy_createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+
 const store = legacy_createStore(countReducer, applyMiddleware(thunk))
 ```
 
