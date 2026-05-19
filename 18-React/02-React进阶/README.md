@@ -10,7 +10,7 @@
 ---
 
 
-## 02-React路由的基本使用
+## [02-React路由的基本使用](/14-Router/01-一级路由/App.jsx)
 
 ### 用法
 - 明确好页面中的导航区，展示区
@@ -23,7 +23,7 @@
               </BrowserRouter>
             </React.StrictMode>)
   ```
-- 导航区的 `a` 标签改为 `Link` 标签
+- 导航区的 `a` 标签改为 `Link` 或者 `NavLink` 标签
   ```jsx
   <Link to="/about">About</Link>
   ```
@@ -33,7 +33,7 @@
     <Route path="/about" element={<About />} />
   </Routes>
   ```
-- `<Navigate>` 可以实现路由的重定向, ~~(ReactRouter6 版本中已删除)~~
+- `<Navigate>` 可以实现路由的重定向, ~~(ReactRouter6 版本中已删除 `Redirect`)~~
   ```jsx
   <Route path="/" element={<Navigate to="/home" />}></Route>
   ```
@@ -59,13 +59,12 @@
 ---
 
 
-## 03-NavLink与封装NavLink
+## [03-NavLink与封装NavLink](/14-Router/01-一级路由/components/MyNavLink/index.jsx)
 
 ### 用法
 - `replace` 属性可以实现路由跳转后不留下历史记录，把默认的 push 模式替换成 replace
 - `NavLink` 可以实现路由链接的高亮，~~通过 `activeClassName` 指定样式名（ReactRouter6 版本中已删除）~~
-- 标签体内容时一个特殊的标签属性 `children`
-- 通过 `this.props.children` 可以获取标签体内容
+- 标签体内容是一个特殊的标签属性 `children`，通过 `this.props.children` 可以获取标签体内容
 - `{...props}` 可以将封装后的 `MyNavLink` 的属性 `to` 传递给 `<NavLink>`，包括标签体内容 `children`
   ```jsx
   {/* 封装后的NavLink */}
@@ -78,7 +77,7 @@
 ---
 
 
-## 04-嵌套路由
+## [04-嵌套路由](/14-Router/02-嵌套路由/router/router.jsx)
 
 ### 用法
 - 在路由配置中通过 `children` 字段定义子路由（子路由的 `path` 不以 `/` 开头，子路由路径会自动拼接到父路由后面）。
@@ -87,7 +86,7 @@
 - 可在路由配置中使用 `<Navigate>` 做重定向，或在父路由中设置子路由默认项。
 - 在 `NavLink` 或 `Link` 中，链接地址应与子路由路径保持一致（例如 `/home/news`）。
 
-路由配置：
+[路由配置：](/14-Router/02-嵌套路由/router/router.jsx)
 ```jsx
 const routes = [
   { path: '/', element: <Navigate to="about" /> },
@@ -104,13 +103,13 @@ const routes = [
 ]
 ```
 
-父组件 `Home` 中的占位符示例：
+[父组件中的占位符 `<Outlet />`：](/14-Router/02-嵌套路由/pages/Home.jsx)
 ```jsx
 function Home() {
   return (
     <div>
-      <NavLink className="list-group-item" to="/home/news">News</NavLink> {/* 链接地址应与子路由路径保持一致 */}
-      <NavLink className="list-group-item" to="/home/message">Message</NavLink>
+      <NavLink to="/home/news">News</NavLink>
+      <NavLink to="/home/message">Message</NavLink>
       <Outlet /> {/* 子路由渲染在这里 */}
     </div>
   )
@@ -126,7 +125,7 @@ function Home() {
 - 路由链接写法示例：`to={`detail/${item.id}`}`。
 - 在接收组件中用 `useParams()` 获取参数。
 
-路由注册：
+[路由注册：](/14-Router/03-params参数/router/router.jsx)
 ```jsx
 {
   path: 'message',
@@ -137,14 +136,14 @@ function Home() {
 }
 ```
 
-路由链接
+[路由链接](/14-Router/03-params参数/pages/Message.jsx)
 ```jsx
 <Link to={`detail/${item.id}`}>链接标题</Link>
 {/* 指定路由展示的位置 */}
 <Outlet />
 ```
 
-接收参数：
+[接收参数：](/14-Router/03-params参数/pages/Detail.jsx)
 ```jsx
 import { useParams } from 'react-router-dom'
 
@@ -164,7 +163,7 @@ const { id, title, content } = useParams()
 - 路由注册中只需定义目标路径，不需要 `:key` 占位符。
 - 在接收组件中用 `useSearchParams()` 获取参数。
 
-路由注册：
+[路由注册：](/14-Router/04-search参数/router/router.jsx)
 ```jsx
 {
   path: 'message',
@@ -175,14 +174,14 @@ const { id, title, content } = useParams()
 }
 ```
 
-路由链接：
+[路由链接：](/14-Router/04-search参数/pages/Message.jsx)
 ```jsx
 <Link to={`detail?id=${item.id}&title=${item.title}&content=${item.content}`}>链接标题</Link>
 {/* 指定路由展示的位置 */}
 <Outlet />
 ```
 
-接收参数：
+[接收参数：](/14-Router/04-search参数/pages/Detail.jsx)
 ```jsx
 import { useSearchParams } from 'react-router-dom'
 
@@ -203,17 +202,17 @@ const content = search.get('content')
 
 ### 用法
 - state 参数通过 `Link` 或 `navigate()` 的 `state` 属性传递。
-- 路由配置与 search 参数类似，只要定义目标路径即可。
+- 路由注册与 search 参数类似，只要定义目标路径即可。
 - 在接收组件中用 `useLocation()` 读取 `location.state`。
 
-路由链接：
+[路由链接：](/14-Router/05-state参数/pages/Message.jsx)
 ```jsx
 <Link to="detail" state={{ id: item.id, title: item.title, content: item.content }}>链接标题</Link>
 {/* 指定路由展示的位置 */}
 <Outlet />
 ```
 
-接收参数：
+[接收参数：](/14-Router/05-state参数/pages/Detail.jsx)
 ```jsx
 import { useLocation } from 'react-router-dom'
 
@@ -258,7 +257,7 @@ function showDetailPanel(item) {
 
 ---
 
-## 12-Redux 小结
+## 09-Redux 小结
 
 ### 01-精简版计算案例
 - 用途：展示 Redux 最小实现（单一 reducer、store、组件直接 dispatch action object）。
