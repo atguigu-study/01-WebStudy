@@ -20,7 +20,7 @@
 3. Route
    * Route用于路径的匹配
    * path属性：用于设置匹配到的路径
-   * component属性：设置匹配到路径后，渲染的组件
+   * element属性：设置匹配到路径后，渲染的组件
    * exact：精准匹配，只有精准匹配到完全一致的路径，才会渲染对应的组件
    * caseSensitive：用于规定匹配时是否区分大小写
    ```javascript
