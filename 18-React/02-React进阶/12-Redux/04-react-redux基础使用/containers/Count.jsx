@@ -33,7 +33,7 @@ const mapDispatchToProps = (dispatch) => {
     addAsync: (num, delay) => {
       dispatch(incrementAsyncAction(num, delay))
     },
-    reduce: (num) => {
+    minus: (num) => {
       dispatch(decrementAction(num))
     }
   }
@@ -42,8 +42,10 @@ const mapDispatchToProps = (dispatch) => {
 /* const mapDispatchToProps = {
   add: incrementAction,
   addAsync: incrementAsyncAction,
-  reduce: decrementAction
+  minus: decrementAction
 } */
 
-// 定义容器组件
-export default connect(mapStateToProps, mapDispatchToProps)(CountUI)
+// 创建并暴露容器组件
+const CountContainer = connect(mapStateToProps, mapDispatchToProps)(CountUI)
+
+export default CountContainer
