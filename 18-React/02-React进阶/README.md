@@ -258,15 +258,14 @@ function showDetailPanel(item) {
 
 ---
 
-## 09-Redux 小结
+## 09-Redux精简版计算案例
+用途：展示 Redux 最小实现（单一 reducer、store、组件直接 dispatch action object）。
 
-### 01-精简版计算案例
-- 用途：展示 Redux 最小实现（单一 reducer、store、组件直接 dispatch action object）。
-- 关键点:
-  - 编写 `reducer` 负责根据 `action.type` 更新状态；
-  - `store` 通过 `legacy_createStore(reducer)` 创建，传入为其服务的 `reducer`；
-  - 组件通过 `store.dispatch({type, data})` 触发更新，并用 `store.getState()` 读取当前状态。
-  - `main.js` 中检测 store 中状态的改变，一旦发生改变，重新渲染 `<App/>`。 redux 只负责管理状态，至于状态的改变驱动着页面的展示，要靠自己写
+### 用法
+- 编写 `reducer` 负责根据 `action.type` 更新状态；
+- `store` 通过 `legacy_createStore(reducer)` 创建，传入为其服务的 `reducer`；
+- 组件通过 `store.dispatch({type, data})` 触发更新，并用 `store.getState()` 读取当前状态。
+- `main.js` 中检测 store 中状态的改变，一旦发生改变，重新渲染 `<App/>`。 redux 只负责管理状态，至于状态的改变驱动着页面的展示，要靠自己写
 
 创建 store:
 ```javascript
@@ -300,12 +299,13 @@ store.subscribe(() => {
 })
 ```
 
-### 02-完整版计算案例
-- 用途：把常量、action creators、reducer、store 分离成模块化结构，示例更贴合生产代码风格。
-- 关键点：
-  - 使用 `constant.js` 定义 action 类型常量，
-  - 使用 `actions.js` 导出 action creators（比如 `incrementAction(data)`），
-  - 组件通过 `store.dispatch(incrementAction(value))` 调用。
+### 10-Redux完整版计算案例
+把常量、action creators、reducer、store 分离成模块化结构，示例更贴合生产代码风格。
+
+### 用法
+- 使用 `constant.js` 定义 action 类型常量，
+- 使用 `actions.js` 导出 action creators（比如 `incrementAction(data)`），
+- 组件通过 `store.dispatch(incrementAction(value))` 调用。
 
 constants:
 ```javascript
@@ -323,11 +323,12 @@ export const incrementAction = data => ({ type: INCREMENT, data })
 store.dispatch(incrementAction(value))
 ```
 
-### 03-异步action
-- 用途：展示如何使用 `redux-thunk` 支持异步逻辑（网络请求或定时器）再 dispatch 同步 action。
-- 关键点：
-  - store 在创建时通过 `applyMiddleware(thunk)` 注册中间件；
-  - 异步 action 返回一个函数，函数接收 `dispatch`，内部可在异步完成后 `dispatch` 同步 action。
+## 11-Redux异步action
+展示如何使用 `redux-thunk` 支持异步逻辑（网络请求或定时器）再 dispatch 同步 action。
+
+### 用法
+- store 在创建时通过 `applyMiddleware(thunk)` 注册中间件；
+- 异步 action 返回一个函数，函数接收 `dispatch`，内部可在异步完成后 `dispatch` 同步 action。
 
 创建 store:
 ```javascript
@@ -350,6 +351,90 @@ export const incrementAsyncAction = (data, delay) => {
 - `state` 的单一来源由 `store` 保证，尽量避免直接在多处存放可变状态。
 - 组件不要直接修改 `state`，应通过 `dispatch` 发出 action，由 reducer 产生新 state。
 - 异步 action 在页面刷新时的 `state` 不持久化，必要时配合持久化方案（localStorage、后端）处理。
+
+
+---
+
+## 12-react-redux基础使用
+- 明确两个概念
+  - UI组件：不能使用任何redux的API，只负责页面的呈现，交互等
+  - 容器组件：负责和redux通信，将结果交给UI组件
+
+### 用法 
+- `connect(mapStateToProps, mapDispatchToProps)(UIComponennt)` 创建并暴露一个容器组件，容器中的 `store` 是靠 `props` 传入的，而不是在容器组件中直接引入 
+- `mapStateToProps(state)` 映射状态，返回值是一个对象
+- `mapDispatchToProps(dispatch)` 映射操作状态的方法，返回值是一个对象 
+- 在 UI 组件中通过 `props` 读取状态和操作状态的方法
+
+[通过 `props` 给容器组件传入 `store`](/12-Redux/04-react-redux基础使用/App.jsx)
+```js
+import store from './redux/store'
+
+<Count store={store} />
+```
+
+[容器组件](/12-Redux/04-react-redux基础使用/containers/Count.jsx)
+```javascript
+// 映射状态
+const mapStateToProps = state => ({ count: state })
+
+// 映射操作状态的方法
+const mapDispatchToProps = dispatch =>  ({
+  add: (num) => dispatch(incrementAction(num)),
+  addAsync: (num, delay) => dispatch(incrementAsyncAction(num, delay)),
+  minus: (num) => dispatch(decrementAction(num))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(CountUI)
+```
+
+[UI组件](/12-Redux/04-react-redux基础使用/components/Count.jsx)
+```js
+this.props.count
+
+this.props.add(value)
+```
+
+
+## 13-融合UI组件与容器组件
+
+### 用法
+- 在应用入口用 `<Provider store={store}>` 包裹根组件，无需在App中为每个容器组件手动传入 `store` 
+- 把 UI 与容器合并到同一文件
+- `mapDispatchToProps` 也可以返回一个对象
+
+[Provider包裹根组件](/12-Redux/05-融合UI组件与容器组件/main.jsx)
+```jsx
+<Provider store={store}>
+  <App />
+</Provider>
+```
+
+[UI组件与容器组件融合后的Count](/12-Redux/05-融合UI组件与容器组件/containers/Count.jsx)
+```javascript
+export default connect(
+  state => ({ count: state }),
+  { add: incrementAction, addAsync: incrementAsyncAction, reduce: decrementAction }
+)(CountUI)
+```
+
+## 14-react-redux 多组件数据共享
+- 用途：演示多个 reducer 合并与不同组件间共享数据（如 `Count` 与 `Person` 组件）。
+- 关键点：
+  - 使用 `combineReducers` 合并多个 reducer，使 `state` 结构变为 `{ count, persons }`。
+  - `mapStateToProps` 中根据合并后的 state 取对应属性（如 `state.count`, `state.persons`）。
+  - 容器组件可从不同 slice 读取并传递给 UI，达到组件间共享数据的效果（见 [/12-Redux/06-react-redux数据共享/redux/reducers/index.js](/12-Redux/06-react-redux数据共享/redux/reducers/index.js)）。
+
+示例（合并 reducers）：
+```javascript
+import { combineReducers } from 'redux'
+import countReducer from './count'
+import personReducer from './person'
+
+export default combineReducers({ count: countReducer, persons: personReducer })
+```
+
+注意：合并 reducer 后 `state` 变为对象，`mapStateToProps` 中读取路径要改为 `state.xxx`；同时在大型应用中推荐把 reducer 拆分为更小的 slice。
 
 
 

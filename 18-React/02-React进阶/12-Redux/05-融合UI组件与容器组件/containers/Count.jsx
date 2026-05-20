@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-// 用于连接UI组件与redux
 import { connect } from 'react-redux'
 import { incrementAction, incrementAsyncAction, decrementAction } from '../redux/actions'
 
